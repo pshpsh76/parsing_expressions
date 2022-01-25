@@ -50,6 +50,21 @@ bool is_num(string& val) {
     return true;
 }
 
+int count_nums(vector<string>& data, int l, int r) {
+    int cnt = 0;
+    int ind = 0;
+    for (int i = l; i <= r; ++i) {
+        if (is_num(data[i])) {
+            ++cnt;
+            ind = i;
+        }
+    }
+    if (cnt == 1) {
+        return ind;
+    }
+    return 1e9;
+}
+
 class Node {
 private:
     Node *right = nullptr, *left = nullptr;
@@ -57,17 +72,9 @@ private:
     string operation;
 public:
     void build_tree_from_infix(vector<string>& data, vector<int>& balance, int l, int r) {
-        if (l == r) {
-            val = data[l];
-            return;
-        }
-        if (r - l == 1) {
-            if (data[l] == "(") {
-                val = data[r];
-            }
-            if (data[r] == ")") {
-                val = data[l];
-            }
+        int ind = count_nums(data, l, r);
+        if (ind != 1e9) {
+            val = data[ind];
             return;
         }
         int last_min = find_last_min(balance, l, r);
