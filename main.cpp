@@ -54,12 +54,14 @@ int count_nums(vector<string>& data, int l, int r) {
     int cnt = 0;
     int ind = 0;
     for (int i = l; i <= r; ++i) {
-        if (is_num(data[i])) {
+        if (is_operation(data[i]) && (data[i] != "(" && data[i] != ")")) {
             ++cnt;
+        }
+        if (is_num(data[i])) {
             ind = i;
         }
     }
-    if (cnt == 1) {
+    if (cnt == 0) {
         return ind;
     }
     return 1e9;
