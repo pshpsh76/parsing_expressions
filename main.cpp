@@ -68,77 +68,77 @@ int count_nums(vector<string>& data, int l, int r) {
 }
 
 class Node {
-private:
-    Node *right = nullptr, *left = nullptr;
-    string val;
-    string operation;
-public:
-    void build_tree_from_infix(vector<string>& data, vector<int>& balance, int l, int r) {
-        int ind = count_nums(data, l, r);
-        if (ind != 1e9) {
-            val = data[ind];
-            return;
+    private:
+        Node *right = nullptr, *left = nullptr;
+        string val;
+        string operation;
+    public:
+        void build_tree_from_infix(vector<string>& data, vector<int>& balance, int l, int r) {
+            int ind = count_nums(data, l, r);
+            if (ind != 1e9) {
+                val = data[ind];
+                return;
+            }
+            int last_min = find_last_min(balance, l, r);
+            operation = data[last_min];
+            right = new Node, left = new Node;
+            right->build_tree_from_infix(data, balance, last_min + 1, r);
+            left->build_tree_from_infix(data, balance, l, last_min - 1);
         }
-        int last_min = find_last_min(balance, l, r);
-        operation = data[last_min];
-        right = new Node, left = new Node;
-        right->build_tree_from_infix(data, balance, last_min + 1, r);
-        left->build_tree_from_infix(data, balance, l, last_min - 1);
-    }
-    int build_tree_from_prefix(vector<string>& data, int i) {
-        if (is_operation(data[i])) {
-            operation = data[i];
-            left = new Node;
-            right = new Node;
-            int j = left->build_tree_from_prefix(data, i + 1);
-            return right->build_tree_from_prefix(data, j);
-        } else {
-            val = data[i];
-            return i + 1;
+        int build_tree_from_prefix(vector<string>& data, int i) {
+            if (is_operation(data[i])) {
+                operation = data[i];
+                left = new Node;
+                right = new Node;
+                int j = left->build_tree_from_prefix(data, i + 1);
+                return right->build_tree_from_prefix(data, j);
+            } else {
+                val = data[i];
+                return i + 1;
+            }
         }
-    }
-    int build_tree_from_postfix(vector<string>& data, int i) {
-        if (is_operation(data[i])) {
-            operation = data[i];
-            left = new Node;
-            right = new Node;
-            int j = right->build_tree_from_postfix(data, i - 1);
-            return left->build_tree_from_postfix(data, j);
-        } else {
-            val = data[i];
-            return i - 1;
+        int build_tree_from_postfix(vector<string>& data, int i) {
+            if (is_operation(data[i])) {
+                operation = data[i];
+                left = new Node;
+                right = new Node;
+                int j = right->build_tree_from_postfix(data, i - 1);
+                return left->build_tree_from_postfix(data, j);
+            } else {
+                val = data[i];
+                return i - 1;
+            }
         }
-    }
-    void to_postfix(vector<string>& result) {
-        if (left == nullptr && right == nullptr) {
-            result.push_back(val);
-            return;
+        void to_postfix(vector<string>& result) {
+            if (left == nullptr && right == nullptr) {
+                result.push_back(val);
+                return;
+            }
+            left->to_postfix(result);
+            right->to_postfix(result);
+            result.push_back(operation);
         }
-        left->to_postfix(result);
-        right->to_postfix(result);
-        result.push_back(operation);
-    }
-    void to_prefix(vector<string>& result) {
-        if (left == nullptr && right == nullptr) {
-            result.push_back(val);
-            return;
+        void to_prefix(vector<string>& result) {
+            if (left == nullptr && right == nullptr) {
+                result.push_back(val);
+                return;
+            }
+            result.push_back(operation);
+            left->to_prefix(result);
+            right->to_prefix(result);
         }
-        result.push_back(operation);
-        left->to_prefix(result);
-        right->to_prefix(result);
-    }
-    void to_infix(vector<string>& result) {
-        if (left == nullptr && right == nullptr) {
-            result.push_back(val);
-            return;
+        void to_infix(vector<string>& result) {
+            if (left == nullptr && right == nullptr) {
+                result.push_back(val);
+                return;
+            }
+            result.push_back("(");
+            left->to_infix(result);
+            result.push_back(operation);
+            right->to_infix(result);
+            result.push_back(")");
         }
-        result.push_back("(");
-        left->to_infix(result);
-        result.push_back(operation);
-        right->to_infix(result);
-        result.push_back(")");
-    }
-};
+    };
 
 void remove_spaces(string& inp) {
     for (int i = 0; i < inp.size(); ++i) {
